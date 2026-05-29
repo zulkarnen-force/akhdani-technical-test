@@ -1,0 +1,9 @@
+docker-compose*.yml
+Dockerfile
+.git
+node_modules
+.gitignore
+README.md
+LICENSE
+*.log
+.env.example

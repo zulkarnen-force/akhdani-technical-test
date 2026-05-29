@@ -1,0 +1,47 @@
+name: "akhdani-technical-test"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "3124:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16.2
+    environment:
+      - POSTGRES_DB=technical_test_db
+      - POSTGRES_USER=akhdani
+      - POSTGRES_PASSWORD=akhdanisecret123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U akhdani -d technical_test_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  dbgate:
+    container_name: dbgate-akhdani
+    image: dbgate/dbgate:latest
+    environment:
+      CONNECTIONS: con1
+      LABEL_con1: Postgres
+      SERVER_con1: db
+      USER_con1: akhdani
+      PASSWORD_con1: akhdanisecret123
+      PORT_con1: 5432
+      ENGINE_con1: postgres@dbgate-plugin-postgres
+    ports:
+      - 3125:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+
+volumes:
+  db_data:

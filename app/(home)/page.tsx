@@ -1,0 +1,113 @@
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { getAll } from "../repositories/perdin-request.repository";
+import Link from "next/link";
+type Props = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+export default async function HomePage({ searchParams }: Props) {
+  const session = await getServerSession(authOptions);
+  const params = await searchParams;
+  const perdinRequestData = await getAll(parseInt(params.page || "1"));
+
+  return (
+    <div className="p-6 bg-surface-base rounded-xl shadow-md">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold">Permohonan Perjalanan Dinas</h2>
+
+          <p className="text-sm text-muted-foreground mt-1">Daftar pengajuan perjalanan dinas</p>
+        </div>
+
+        <Link
+          href="/new"
+          className="px-4 py-2 rounded-lg bg-primary text-font-primary bg-brand-100 hover:opacity-90 transition"
+        >
+          Tambah
+        </Link>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-xl border border-border">
+        <table className="w-full text-sm">
+          <thead className="bg-surface-muted border-b border-border">
+            <tr>
+              <th className="text-left px-4 py-3 font-semibold">Nomor</th>
+              <th className="text-left px-4 py-3 font-semibold">Tujuan</th>
+              <th className="text-left px-4 py-3 font-semibold">Pemohon</th>
+              <th className="text-left px-4 py-3 font-semibold">Status</th>
+              <th className="text-right px-4 py-3 font-semibold">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {perdinRequestData.data.map((item) => (
+              <tr
+                key={item.id}
+                className="border-b border-border hover:bg-surface-muted/50 transition"
+              >
+                <td className="px-4 py-4">{item.id}</td>
+
+                <td className="px-4 py-4">{item.destinationCity.name}</td>
+
+                <td className="px-4 py-4">{item.user.username}</td>
+
+                <td className="px-4 py-4">
+                  <span
+                    className={`
+                      px-3 py-1 rounded-full text-xs font-medium
+                      ${
+                        item.status === "APPROVED"
+                          ? "bg-green-500/10 text-green-500"
+                          : item.status === "PENDING"
+                            ? "bg-yellow-500/10 text-yellow-500"
+                            : "bg-red-500/10 text-red-500"
+                      }
+                    `}
+                  >
+                    {item.status}
+                  </span>
+                </td>
+
+                <td className="px-4 py-4 text-right">
+                  <button className="text-primary hover:underline">Detail</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer Pagination */}
+      <div className="flex items-center justify-between mt-6">
+        <p className="text-sm text-muted-foreground">
+          Showing {perdinRequestData.page} to {perdinRequestData.page * perdinRequestData.pageSize}{" "}
+          of {perdinRequestData.total} entries
+        </p>
+
+        <div className="flex items-center gap-2">
+          {perdinRequestData.page > 1 && (
+            <Link
+              href={`?page=${perdinRequestData.page - 1}`}
+              className="px-3 py-2 rounded-lg border border-border hover:bg-surface-muted transition bg-brand-50"
+            >
+              Previous
+            </Link>
+          )}
+
+          <button className="px-3 py-2 rounded-lg bg-primary text-white">1</button>
+
+          <Link
+            href={`?page=${perdinRequestData.page + 1}`}
+            className="px-3 py-2 rounded-lg border border-border hover:bg-surface-muted transition bg-brand-100"
+          >
+            Next
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
