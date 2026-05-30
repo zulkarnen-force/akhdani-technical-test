@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { travelSchema, TravelSchema } from "@/schema/travel.schema";
 import { createTravel } from "./actions";
-import { City } from "@/lib/types";
+import { CityName } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 interface Props {
-  cities: City[];
+  cities: CityName[];
 }
 
 export default function TravelRequestForm({ cities }: Props) {
@@ -27,6 +28,8 @@ export default function TravelRequestForm({ cities }: Props) {
     },
   });
 
+  const router = useRouter();
+
   const departureDate = watch("departureDate");
   const arrivalDate = watch("arrivalDate");
 
@@ -44,9 +47,12 @@ export default function TravelRequestForm({ cities }: Props) {
 
   const onSubmit = async (data: TravelSchema) => {
     try {
+      console.log("Submitting travel request:", data);
       await createTravel(data);
+      router.replace("/");
+      router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error("Error creating travel request:", error);
     }
   };
 
@@ -145,16 +151,12 @@ export default function TravelRequestForm({ cities }: Props) {
               <span>Total waktu perjalanan</span>
               <span className="font-medium">{hari} hari</span>
             </div>
-            <div className="flex justify-between gap-2">
-              <span>Biaya</span>
-              <span className="font-medium">Rp 1.000.000</span>
-            </div>
           </div>
         </div>
 
         <div className="flex justify-end">
           <button type="submit" className="mt-4 px-4 py-2 bg-brand-50 text-text-body rounded-md">
-            Hitung
+            Submit
           </button>
         </div>
       </form>

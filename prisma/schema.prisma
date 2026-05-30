@@ -34,6 +34,8 @@ model User {
   password       String
   role           Role            @default(PEGAWAI)
   perdinRequests PerdinRequest[]
+
+  @@map("users")
 }
 
 model PerdinRequest {
@@ -47,9 +49,14 @@ model PerdinRequest {
   status            PerdinStatus @default(PENDING)
   destinationCity   City     @relation("DestinationCity", fields: [destinationCityId], references: [id])
   originCity        City     @relation("OriginCity", fields: [originCityId], references: [id])
-
-  travelCost Decimal? @map("travel_cost") @db.Decimal(10, 2)
   currency   Currency? @default(IDR)
+
+  totalKm     Int?   @map("total_km")
+  totalDay    Int?   @map("total_day")
+  travelCost Decimal? @map("travel_cost") @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("perdin_requests")
 }

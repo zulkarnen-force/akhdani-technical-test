@@ -2,13 +2,13 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { getAll } from "../repositories/perdin-request.repository";
 import Link from "next/link";
+import requireRole, { hasPermissions } from "@/lib/role";
 type Props = {
   searchParams: Promise<{
     page?: string;
   }>;
 };
 export default async function HomePage({ searchParams }: Props) {
-  const session = await getServerSession(authOptions);
   const params = await searchParams;
   const perdinRequestData = await getAll(parseInt(params.page || "1"));
 
@@ -18,16 +18,16 @@ export default async function HomePage({ searchParams }: Props) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold">Permohonan Perjalanan Dinas</h2>
-
           <p className="text-sm text-muted-foreground mt-1">Daftar pengajuan perjalanan dinas</p>
         </div>
-
-        <Link
-          href="/new"
-          className="px-4 py-2 rounded-lg bg-primary text-font-primary bg-brand-100 hover:opacity-90 transition"
-        >
-          Tambah
-        </Link>
+        {(await hasPermissions(["write:request"])) && (
+          <Link
+            href="/new"
+            className="px-4 py-2 rounded-lg bg-primary text-font-primary bg-brand-100 hover:opacity-90 transition"
+          >
+            Tambah
+          </Link>
+        )}
       </div>
 
       {/* Table */}
@@ -51,7 +51,10 @@ export default async function HomePage({ searchParams }: Props) {
               >
                 <td className="px-4 py-4">{item.id}</td>
 
-                <td className="px-4 py-4">{item.destinationCity.name}</td>
+                <td className="px-4 py-4">
+                  {item.originCity.name} <span className="font-bold text-2xl">&#8594;</span>{" "}
+                  {item.destinationCity.name}
+                </td>
 
                 <td className="px-4 py-4">{item.user.username}</td>
 
@@ -73,7 +76,9 @@ export default async function HomePage({ searchParams }: Props) {
                 </td>
 
                 <td className="px-4 py-4 text-right">
-                  <button className="text-primary hover:underline">Detail</button>
+                  <Link href={`/${item.id}`} className="text-primary hover:underline">
+                    Detail
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -84,12 +89,12 @@ export default async function HomePage({ searchParams }: Props) {
       {/* Footer Pagination */}
       <div className="flex items-center justify-between mt-6">
         <p className="text-sm text-muted-foreground">
-          Showing {perdinRequestData.page} to {perdinRequestData.page * perdinRequestData.pageSize}{" "}
-          of {perdinRequestData.total} entries
+          Showing {perdinRequestData.page} to {perdinRequestData.page * perdinRequestData.limit} of{" "}
+          {perdinRequestData.totalItems} entries
         </p>
 
         <div className="flex items-center gap-2">
-          {perdinRequestData.page > 1 && (
+          {perdinRequestData.hasPreviousPage && (
             <Link
               href={`?page=${perdinRequestData.page - 1}`}
               className="px-3 py-2 rounded-lg border border-border hover:bg-surface-muted transition bg-brand-50"
@@ -98,14 +103,21 @@ export default async function HomePage({ searchParams }: Props) {
             </Link>
           )}
 
-          <button className="px-3 py-2 rounded-lg bg-primary text-white">1</button>
-
-          <Link
-            href={`?page=${perdinRequestData.page + 1}`}
-            className="px-3 py-2 rounded-lg border border-border hover:bg-surface-muted transition bg-brand-100"
+          <button
+            className="underline underline-offset-4 decoration-brand-500 decoration-2 px-4"
+            disabled
           >
-            Next
-          </Link>
+            {perdinRequestData.page}
+          </button>
+
+          {perdinRequestData.hasNextPage && (
+            <Link
+              href={`?page=${perdinRequestData.page + 1}`}
+              className="px-3 py-2 rounded-lg border border-border hover:bg-surface-muted transition bg-brand-100"
+            >
+              Next
+            </Link>
+          )}
         </div>
       </div>
     </div>
