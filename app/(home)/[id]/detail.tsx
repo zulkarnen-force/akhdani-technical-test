@@ -2,10 +2,25 @@
 
 import Card from "@/components/card";
 import { useRouter } from "next/navigation";
-import { PerdinRequest } from "@/lib/types";
+import { PerdinRequest, Role } from "@/lib/types";
 import { setStatusAction } from "./action";
 
-export default function TravelCardDetail({ id, data }: { id: string; data: PerdinRequest | null }) {
+const formatCostCurrency = (currency: string, cost: number | undefined): React.ReactNode => {
+  {
+    return currency && currency === "IDR"
+      ? `Rp ${cost?.toLocaleString("id-ID")}`
+      : "$" + (cost?.toLocaleString("en-US") || "-");
+  }
+};
+export default function TravelCardDetail({
+  id,
+  data,
+  role,
+}: {
+  id: string;
+  data: PerdinRequest | null;
+  role: Role;
+}) {
   const router = useRouter();
 
   if (!data) {
@@ -20,12 +35,28 @@ export default function TravelCardDetail({ id, data }: { id: string; data: Perdi
     router.refresh();
   };
 
+  const MapLabelColorStatus: Record<"APPROVED" | "REJECTED" | "PENDING", string> = {
+    APPROVED: "bg-brand-100 text-brand-700",
+    REJECTED: "bg-red-100 text-red-800",
+    PENDING: "bg-yellow-100 text-yellow-800",
+  };
+
+  const MapLabelStatusText: Record<"APPROVED" | "REJECTED" | "PENDING", string> = {
+    APPROVED: "Disetujui",
+    REJECTED: "Ditolak",
+    PENDING: "Menunggu approval",
+  };
+
   return (
     <Card className="max-w-4xl mx-auto mt-10">
       <Card.Header>
         <Card.Title>Travel Detail Request Page</Card.Title>
         <Card.Header.Description>
-          Travel ID: <span className="font-bold bg-brand-100 px-2 py-1 rounded-lg">{id}</span>
+          <span
+            className={`font-bold bg-brand-100 px-2 py-1 rounded-lg ${MapLabelColorStatus[data.status]}`}
+          >
+            {MapLabelStatusText[data.status]}
+          </span>
         </Card.Header.Description>
       </Card.Header>
       <Card.Content>
@@ -132,31 +163,42 @@ export default function TravelCardDetail({ id, data }: { id: string; data: Perdi
                   <td className="px-4 py-2 text-sm text-foreground">{data?.days || "-"}</td>
                   <td className="px-4 py-2 text-sm text-foreground">{data?.km || "-"}</td>
                   <td className="px-4 py-2 text-sm text-foreground">
-                    {data?.currency && data?.currency === "IDR"
-                      ? `Rp ${data.travelCost?.toLocaleString("id-ID")}`
-                      : "$" + (data.travelCost?.toLocaleString("en-US") || "-")}
+                    {data.status === "APPROVED" && data.currency && data.travelCost ? (
+                      formatCostCurrency(data.currency, data.travelCost)
+                    ) : role === "SDM_DIVISION" ? (
+                      <span className="text-primary font-medium">
+                        {formatCostCurrency(data.currency || "IDR", data.travelCost || 0)}
+                      </span>
+                    ) : (
+                      <span className="text-text-muted italic">
+                        {MapLabelStatusText[data.status]}
+                      </span>
+                    )}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-
-          <div className="flex justify-end mt-6">
-            <button
-              type="button"
-              className="bg-danger hover:bg-color-danger text-white font-medium py-2 px-4 rounded-md"
-              onClick={() => setTo("REJECTED")}
-            >
-              Reject
-            </button>
-            <button
-              type="button"
-              className="bg-success hover:bg-color-success text-white font-medium py-2 px-4 rounded-md ml-2"
-              onClick={() => setTo("APPROVED")}
-            >
-              Approve
-            </button>
-          </div>
+          {role === "SDM_DIVISION" && (
+            <div>
+              <div className="flex justify-end mt-6">
+                <button
+                  type="button"
+                  className="bg-danger hover:bg-color-danger text-white font-medium py-2 px-4 rounded-md"
+                  onClick={() => setTo("REJECTED")}
+                >
+                  Reject
+                </button>
+                <button
+                  type="button"
+                  className="bg-success hover:bg-color-success text-white font-medium py-2 px-4 rounded-md ml-2"
+                  onClick={() => setTo("APPROVED")}
+                >
+                  Approve
+                </button>
+              </div>
+            </div>
+          )}
         </form>
       </Card.Content>
     </Card>
