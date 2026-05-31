@@ -70,8 +70,7 @@ http://localhost:3124
 
 ---
 <img width="1875" height="1048" alt="image" src="https://github.com/user-attachments/assets/3ec0648e-2fc3-4572-b334-3b9e494b7307" />
-
-<img width="1875" height="1048" alt="image" src="https://github.com/user-attachments/assets/a6eb7abd-680f-4ebc-a5ff-2e695e22c98d" />
+<img width="1875" height="1048" alt="image" src="https://github.com/user-attachments/assets/4fde88b4-855c-45d5-83d0-df32afc5c0c4" />
 
 
 
