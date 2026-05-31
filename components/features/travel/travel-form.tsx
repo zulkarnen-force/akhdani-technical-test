@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { travelSchema, TravelSchema } from "@/schema/travel.schema";
-import { createTravel } from "./actions";
-import { CityName } from "@/lib/types";
+import { CityName } from "@/types";
 import { useRouter } from "next/navigation";
+import { createTravel } from "@/actions/travel.action";
 
 interface Props {
   cities: CityName[];
@@ -61,7 +61,9 @@ export default function TravelRequestForm({ cities }: Props) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold">Permohonan Perjalanan Dinas</h2>
-          <p className="text-sm text-muted-foreground mt-1">Tambah permohonan baru</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Tambah permohonan baru
+          </p>
         </div>
       </div>
 
@@ -85,7 +87,11 @@ export default function TravelRequestForm({ cities }: Props) {
                 </option>
               ))}
             </select>
-            {errors.origin && <p className="text-sm text-red-500 mt-1">{errors.origin.message}</p>}
+            {errors.origin && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.origin.message}
+              </p>
+            )}
           </div>
 
           <div className="mx-auto my-6">
@@ -107,7 +113,9 @@ export default function TravelRequestForm({ cities }: Props) {
               ))}
             </select>
             {errors.destination && (
-              <p className="text-sm text-red-500 mt-1">{errors.destination.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.destination.message}
+              </p>
             )}
           </div>
         </div>
@@ -115,7 +123,9 @@ export default function TravelRequestForm({ cities }: Props) {
         {/* tanggal */}
         <div className="grid grid-cols-3 gap-6">
           <div className="mb-4">
-            <label className="block text-sm font-medium">Tanggal Berangkat</label>
+            <label className="block text-sm font-medium">
+              Tanggal Berangkat
+            </label>
 
             <input
               type="date"
@@ -123,7 +133,9 @@ export default function TravelRequestForm({ cities }: Props) {
               {...register("departureDate")}
             />
             {errors.departureDate && (
-              <p className="text-sm text-red-500 mt-1">{errors.departureDate.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.departureDate.message}
+              </p>
             )}
           </div>
 
@@ -140,7 +152,9 @@ export default function TravelRequestForm({ cities }: Props) {
               {...register("arrivalDate")}
             />
             {errors.arrivalDate && (
-              <p className="text-sm text-red-500 mt-1">{errors.arrivalDate.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.arrivalDate.message}
+              </p>
             )}
           </div>
         </div>
@@ -155,7 +169,10 @@ export default function TravelRequestForm({ cities }: Props) {
         </div>
 
         <div className="flex justify-end">
-          <button type="submit" className="mt-4 px-4 py-2 bg-brand-50 text-text-body rounded-md">
+          <button
+            type="submit"
+            className="mt-4 px-4 py-2 bg-brand-50 text-text-body rounded-md"
+          >
             Submit
           </button>
         </div>

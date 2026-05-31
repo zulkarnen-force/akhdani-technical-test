@@ -1,5 +1,5 @@
-import { getCityNames } from "@/app/repositories/city.repository";
-import TravelRequestForm from "./travel-form";
+import TravelRequestForm from "@/components/features/travel/travel-form";
+import { getCityNames } from "@/server/repositories/city.repository";
 
 export default async function NewPage() {
   const cities = await getCityNames();

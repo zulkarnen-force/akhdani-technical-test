@@ -1,8 +1,8 @@
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { getAll } from "../repositories/perdin-request.repository";
 import Link from "next/link";
-import requireRole, { hasPermissions } from "@/lib/role";
+import { hasPermissions } from "@/lib/role";
+import { getAll } from "@/server/repositories/perdin-request.repository";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 type Props = {
   searchParams: Promise<{
     page?: string;
@@ -10,15 +10,34 @@ type Props = {
 };
 export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
-  const perdinRequestData = await getAll(parseInt(params.page || "1"));
+  const session = await getServerSession(authOptions);
 
+  if (!session) {
+    return <div>Not authenticated</div>;
+  }
+  const perdinRequestData = await getAll(
+    parseInt(params.page || "1"),
+    session.user.id,
+  );
+
+  const startItem =
+    perdinRequestData.totalItems === 0
+      ? 0
+      : (perdinRequestData.page - 1) * perdinRequestData.limit + 1;
+
+  const endItem = Math.min(
+    perdinRequestData.page * perdinRequestData.limit,
+    perdinRequestData.totalItems,
+  );
   return (
     <div className="p-6 bg-surface-base rounded-xl shadow-md">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold">Permohonan Perjalanan Dinas</h2>
-          <p className="text-sm text-muted-foreground mt-1">Daftar pengajuan perjalanan dinas</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Daftar pengajuan perjalanan dinas
+          </p>
         </div>
         {(await hasPermissions(["write:request"])) && (
           <Link
@@ -52,7 +71,8 @@ export default async function HomePage({ searchParams }: Props) {
                 <td className="px-4 py-4">{item.id}</td>
 
                 <td className="px-4 py-4">
-                  {item.originCity.name} <span className="font-bold text-2xl">&#8594;</span>{" "}
+                  {item.originCity.name}{" "}
+                  <span className="font-bold text-2xl">&#8594;</span>{" "}
                   {item.destinationCity.name}
                 </td>
 
@@ -76,7 +96,10 @@ export default async function HomePage({ searchParams }: Props) {
                 </td>
 
                 <td className="px-4 py-4 text-right">
-                  <Link href={`/${item.id}`} className="text-primary hover:underline">
+                  <Link
+                    href={`/${item.id}`}
+                    className="text-primary hover:underline"
+                  >
                     Detail
                   </Link>
                 </td>
@@ -86,11 +109,10 @@ export default async function HomePage({ searchParams }: Props) {
         </table>
       </div>
 
-      {/* Footer Pagination */}
       <div className="flex items-center justify-between mt-6">
         <p className="text-sm text-muted-foreground">
-          Showing {perdinRequestData.page} to {perdinRequestData.page * perdinRequestData.limit} of{" "}
-          {perdinRequestData.totalItems} entries
+          Showing {startItem} to {endItem} of {perdinRequestData.totalItems}{" "}
+          entries
         </p>
 
         <div className="flex items-center gap-2">

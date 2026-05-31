@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutAction } from "./action";
+import { signOutAction } from "@/app/(home)/action";
 
 export default function SignOut() {
   return (

@@ -1,4 +1,4 @@
-import { Role } from "@/lib/types";
+import { Role } from "@/types";
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {

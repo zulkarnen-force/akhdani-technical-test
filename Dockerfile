@@ -1,4 +1,4 @@
-FROM node:24.16 AS base
+FROM node:24.16-alpine AS base
 WORKDIR /app
 
 FROM base AS deps-dev
@@ -17,14 +17,15 @@ COPY package*.json ./
 RUN npm install --only=production
 
 FROM base AS build
-COPY --from=deps-prod /app/node_modules /app/node_modules
+COPY --from=deps-dev /app/node_modules /app/node_modules
 COPY . .
 RUN npm run build
 
 FROM base AS prod
-COPY --from=build /app/.next /app/.next
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/package.json /app/package.json
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
 COPY --from=build /app/prisma /app/prisma
+COPY package*.json ./
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

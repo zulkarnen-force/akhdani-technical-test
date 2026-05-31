@@ -13,6 +13,17 @@ describe("calculateCost", () => {
     expect(result).toEqual({ travelCost: 0, currency: "IDR" });
   });
 
+  it("should return 0 cost for km <= 60 (10km)", () => {
+    const result = calculateCost({
+      origin: { island: "Java", province: "Jakarta" },
+      destination: { island: "Java", province: "Bandung" },
+      days: 1,
+      km: 10,
+      isAbroad: false,
+    });
+    expect(result).toEqual({ travelCost: 0, currency: "IDR" });
+  });
+
   it("should calculate abroad cost correctly", () => {
     const result = calculateCost({
       origin: { island: "Java", province: "Jakarta" },
@@ -44,5 +55,16 @@ describe("calculateCost", () => {
       isAbroad: false,
     });
     expect(result).toEqual({ travelCost: 200_000, currency: "IDR" });
+  });
+
+  it("should calculate aboard travel", () => {
+    const result = calculateCost({
+      origin: { island: "Jawa", province: "Jawa Barat" },
+      destination: { island: "Singapore", province: "Prov. Singapore" },
+      days: 2,
+      km: 1_000,
+      isAbroad: true,
+    });
+    expect(result).toEqual({ travelCost: 100, currency: "USD" });
   });
 });

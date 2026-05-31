@@ -1,7 +1,8 @@
+node_modules/
+.git/
+.next/
 docker-compose*.yml
 Dockerfile
-.git
-node_modules
 .gitignore
 README.md
 LICENSE

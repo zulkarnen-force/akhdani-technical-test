@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -39,20 +39,20 @@ model User {
 }
 
 model PerdinRequest {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId            String   @map("user_id") @db.Uuid
-  user              User     @relation(fields: [userId], references: [id])
-  destinationCityId String   @map("destination_city_id") @db.Uuid
-  originCityId      String   @map("origin_city_id") @db.Uuid
-  arrivalDate       DateTime @map("arrival_date") @db.Date
-  departureDate     DateTime @map("departure_date") @db.Date
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String       @map("user_id") @db.Uuid
+  user              User         @relation(fields: [userId], references: [id])
+  destinationCityId String       @map("destination_city_id") @db.Uuid
+  originCityId      String       @map("origin_city_id") @db.Uuid
+  arrivalDate       DateTime     @map("arrival_date") @db.Date
+  departureDate     DateTime     @map("departure_date") @db.Date
   status            PerdinStatus @default(PENDING)
-  destinationCity   City     @relation("DestinationCity", fields: [destinationCityId], references: [id])
-  originCity        City     @relation("OriginCity", fields: [originCityId], references: [id])
-  currency   Currency? @default(IDR)
+  destinationCity   City         @relation("DestinationCity", fields: [destinationCityId], references: [id])
+  originCity        City         @relation("OriginCity", fields: [originCityId], references: [id])
+  currency          Currency?    @default(IDR)
 
-  totalKm     Int?   @map("total_km")
-  totalDay    Int?   @map("total_day")
+  totalKm    Int?     @map("total_km")
+  totalDay   Int?     @map("total_day")
   travelCost Decimal? @map("travel_cost") @db.Decimal(10, 2)
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -62,25 +62,34 @@ model PerdinRequest {
 }
 
 model City {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String  @unique
-  province  String
-  islandId  String   @map("island_id") @db.Uuid
-  longitude Float
-  latitude  Float
-  is_abroad Boolean @default(false)
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String  @unique
+  provinceId String  @map("province_id") @db.Uuid
+  islandId   String  @map("island_id") @db.Uuid
+  longitude  Float
+  latitude   Float
+  is_abroad  Boolean @default(false)
 
-  originPerdinRequest PerdinRequest[] @relation("DestinationCity")
+  province                 Province        @relation(fields: [provinceId], references: [id])
+  originPerdinRequest      PerdinRequest[] @relation("DestinationCity")
   destinationPerdinRequest PerdinRequest[] @relation("OriginCity")
-  island              Island   @relation(fields: [islandId], references: [id])
+  island                   Island          @relation(fields: [islandId], references: [id])
 
   @@map("cities")
+}
+
+model Province {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name   String @unique
+  cities City[]
+
+  @@map("provinces")
 }
 
 model Island {
   id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   City City[]
-  
+
   @@map("islands")
 }

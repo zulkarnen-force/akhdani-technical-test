@@ -5,15 +5,26 @@ export type CityName = {
   name: string;
 };
 
+export type Province = {
+  id: string;
+  name: string;
+};
+
+export type Island = Province;
+
 export type City = {
   id: string;
   name: string;
   island: {
+    id: string;
     name: string;
   };
   longitude: number;
   latitude: number;
-  province: string;
+  province: {
+    id: string;
+    name: string;
+  };
   is_abroad: boolean;
 };
 

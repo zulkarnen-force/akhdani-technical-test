@@ -1,5 +1,5 @@
-import { getById } from "@/app/repositories/perdin-request.repository";
-import TravelCardDetail from "./detail";
+import { getById } from "@/server/repositories/perdin-request.repository";
+import TravelCardDetail from "@/components/features/travel/detail";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";

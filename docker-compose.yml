@@ -2,25 +2,35 @@ name: "akhdani-technical-test"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: dev
+    container_name: akhdani-technical-dev
     volumes:
       - .:/app
     ports:
-      - "3124:3000"
+      - "3124:3124"
+    environment:
+      - NODE_ENV=development
+      - NEXTAUTH_URL=http://localhost:3124
+      - PORT=3124
     depends_on:
       - db
-
 
   app-release:
     build:
       context: .
       target: prod
+    container_name: akhdani-technical
+    environment:
+      - PORT=3000
     ports:
-      - "3010:3000"
+      - "3000:3000"
     depends_on:
       - db
   db:
     image: postgres:16.2
+    container_name: akhdani-technical-db
     environment:
       - POSTGRES_DB=technical_test_db
       - POSTGRES_USER=akhdani
@@ -34,7 +44,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   dbgate:
-    container_name: dbgate-akhdani
+    container_name: dbgate-akhdani-dbgate
     image: dbgate/dbgate:latest
     environment:
       CONNECTIONS: con1

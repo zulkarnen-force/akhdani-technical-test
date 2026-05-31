@@ -3,7 +3,7 @@ import {
   IN_PROVINCE_COST_MIN_60_KM,
   OUT_PROVINCE_COST_DIFFERENT_ISLAND_MIN_60_KM,
   OUT_PROVINCE_COST_SAME_ISLAND_MIN_60_KM,
-} from "./const";
+} from "@/constants";
 
 type CostCalculation = {
   travelCost: number;
@@ -37,11 +37,23 @@ export function calculateCost({
   if (isAbroad) {
     return { travelCost: days * ABOARD_COST_PERDAY, currency: "USD" };
   }
-  if (origin.province !== destination.province && origin.island !== destination.island) {
-    return { travelCost: OUT_PROVINCE_COST_DIFFERENT_ISLAND_MIN_60_KM, currency: "IDR" };
+  if (
+    origin.province !== destination.province &&
+    origin.island !== destination.island
+  ) {
+    return {
+      travelCost: OUT_PROVINCE_COST_DIFFERENT_ISLAND_MIN_60_KM,
+      currency: "IDR",
+    };
   }
-  if (origin.province !== destination.province && origin.island === destination.island) {
-    return { travelCost: OUT_PROVINCE_COST_SAME_ISLAND_MIN_60_KM, currency: "IDR" };
+  if (
+    origin.province !== destination.province &&
+    origin.island === destination.island
+  ) {
+    return {
+      travelCost: OUT_PROVINCE_COST_SAME_ISLAND_MIN_60_KM,
+      currency: "IDR",
+    };
   }
   return { travelCost: IN_PROVINCE_COST_MIN_60_KM, currency: "IDR" };
 }
