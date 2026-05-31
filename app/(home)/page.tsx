@@ -15,10 +15,7 @@ export default async function HomePage({ searchParams }: Props) {
   if (!session) {
     return <div>Not authenticated</div>;
   }
-  const perdinRequestData = await getAll(
-    parseInt(params.page || "1"),
-    session.user.id,
-  );
+  const perdinRequestData = await getAll(parseInt(params.page || "1"), session.user.id);
 
   const startItem =
     perdinRequestData.totalItems === 0
@@ -35,9 +32,7 @@ export default async function HomePage({ searchParams }: Props) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold">Permohonan Perjalanan Dinas</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Daftar pengajuan perjalanan dinas
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Daftar pengajuan perjalanan dinas</p>
         </div>
         {(await hasPermissions(["write:request"])) && (
           <Link
@@ -61,33 +56,25 @@ export default async function HomePage({ searchParams }: Props) {
               <th className="text-right px-4 py-3 font-semibold">Action</th>
             </tr>
           </thead>
-
-          {perdinRequestData.data.length === 0 && (
-            <tr>
-              <td colSpan={5} className="px-4 py-4 text-center">
-                Belum ada permohonan
-              </td>
-            </tr>
-          )}
           <tbody>
-            {perdinRequestData.data.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-border hover:bg-surface-muted/50 transition"
-              >
-                <td className="px-4 py-4">{item.id}</td>
+            {perdinRequestData.data.length > 0 ? (
+              perdinRequestData.data.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-border hover:bg-surface-muted/50 transition"
+                >
+                  <td className="px-4 py-4">{item.id}</td>
 
-                <td className="px-4 py-4">
-                  {item.originCity.name}{" "}
-                  <span className="font-bold text-2xl">&#8594;</span>{" "}
-                  {item.destinationCity.name}
-                </td>
+                  <td className="px-4 py-4">
+                    {item.originCity.name} <span className="font-bold text-2xl">&#8594;</span>{" "}
+                    {item.destinationCity.name}
+                  </td>
 
-                <td className="px-4 py-4">{item.user.username}</td>
+                  <td className="px-4 py-4">{item.user.username}</td>
 
-                <td className="px-4 py-4">
-                  <span
-                    className={`
+                  <td className="px-4 py-4">
+                    <span
+                      className={`
                       px-3 py-1 rounded-full text-xs font-medium
                       ${
                         item.status === "APPROVED"
@@ -97,29 +84,32 @@ export default async function HomePage({ searchParams }: Props) {
                             : "bg-red-500/10 text-red-500"
                       }
                     `}
-                  >
-                    {item.status}
-                  </span>
-                </td>
+                    >
+                      {item.status}
+                    </span>
+                  </td>
 
-                <td className="px-4 py-4 text-right">
-                  <Link
-                    href={`/${item.id}`}
-                    className="text-primary hover:underline"
-                  >
-                    Detail
-                  </Link>
+                  <td className="px-4 py-4 text-right">
+                    <Link href={`/${item.id}`} className="text-primary hover:underline">
+                      Detail
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-4 py-4 text-center">
+                  Belum ada permohonan
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
       <div className="flex items-center justify-between mt-6">
         <p className="text-sm text-muted-foreground">
-          Showing {startItem} to {endItem} of {perdinRequestData.totalItems}{" "}
-          entries
+          Showing {startItem} to {endItem} of {perdinRequestData.totalItems} entries
         </p>
 
         <div className="flex items-center gap-2">
