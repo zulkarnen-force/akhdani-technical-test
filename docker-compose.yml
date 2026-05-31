@@ -7,6 +7,7 @@ services:
       target: dev
     container_name: akhdani-technical-dev
     volumes:
+      - "/app/node_modules"
       - .:/app
     ports:
       - "3124:3124"
