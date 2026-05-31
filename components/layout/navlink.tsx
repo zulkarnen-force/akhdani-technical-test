@@ -1,41 +1,11 @@
 "use client";
-import { Role } from "@/types";
+import { LINKS } from "@/constants";
+import { LinkItem, Role } from "@/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function NavLink({ role }: { role: Role }) {
-  const links = [
-    {
-      name: "Permohonan Perjalanan Dinas",
-      href: "/",
-      key: "home",
-      role: ["SDM_DIVISION", "PEGAWAI"],
-      disable: false,
-    },
-    {
-      name: "Master Data",
-      href: "/master-data/cities",
-      key: "master-data",
-      role: ["SDM_DIVISION"],
-      disable: true,
-      childs: [
-        {
-          name: "Cities",
-          href: "/master-data/cities",
-          key: "cities",
-          role: ["SDM_DIVISION"],
-        },
-        {
-          name: "Provinces",
-          href: "/master-data/provinces",
-          key: "provinces",
-          role: ["SDM_DIVISION"],
-        },
-      ],
-    },
-  ];
-
-  const filterByRole = links.filter((link) => {
+  const filterByRole = LINKS.filter((link) => {
     return link.role.includes(role);
   });
 
@@ -44,7 +14,17 @@ export default function NavLink({ role }: { role: Role }) {
       return pathname === "/" || /^\/[a-f0-9-]+$/.test(pathname);
     }
 
-    return pathname.startsWith(href);
+    return pathname === href;
+  };
+
+  const isParentActive = (link: LinkItem) => {
+    if (!link.childs) {
+      return isActive(link.href);
+    }
+    return (
+      link.childs.length > 0 &&
+      link.childs.some((child) => pathname === child.href)
+    );
   };
   const pathname = usePathname();
 
@@ -57,7 +37,7 @@ export default function NavLink({ role }: { role: Role }) {
               href={link.href}
               aria-disabled={link.disable}
               className={`text-lg font-medium hover:bold active:text-primary text-center flex ${
-                isActive(link.href)
+                isParentActive(link)
                   ? "underline decoration-2 decoration-brand-500 underline-offset-8"
                   : ""
               } ${link.disable ? "" : ""}`}

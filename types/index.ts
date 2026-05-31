@@ -1,4 +1,4 @@
-export type Role = "KARYAWAN" | "SDM_DIVISION";
+export type Role = "PEGAWAI" | "SDM_DIVISION";
 
 export type CityName = {
   id: string;
@@ -54,4 +54,21 @@ export type PaginationResult<T> = {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+};
+
+export type LinkItem = {
+  name: string;
+  href: string;
+  key: string;
+  role: Role[];
+  disable?: boolean;
+  childs?: LinkItemChild[];
+};
+
+type LinkItemChild = {
+  name: string;
+  href: string;
+  key: string;
+  role: Role[];
+  disable?: boolean;
 };
