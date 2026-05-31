@@ -1,5 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 
@@ -79,12 +80,20 @@ export default function SignInPage({
               {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
-          <button
-            type="submit"
-            className="w-full py-2 bg-brand-500 text-white rounded hover:bg-brand-600 transition-colors"
-          >
-            Sign In
-          </button>
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-brand-500 text-white rounded hover:bg-brand-600 transition-colors my-4"
+        >
+          Sign In
+        </button>
+        <div>
+          <span className="">
+            Belum punya akun?{" "}
+            <Link href="/sign-up" className="text-brand-500 hover:underline">
+              Daftar di sini
+            </Link>
+          </span>
         </div>
       </form>
     </div>

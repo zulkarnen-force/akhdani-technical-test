@@ -42,7 +42,7 @@ export function calculateCost({
     origin.island !== destination.island
   ) {
     return {
-      travelCost: OUT_PROVINCE_COST_DIFFERENT_ISLAND_MIN_60_KM,
+      travelCost: OUT_PROVINCE_COST_DIFFERENT_ISLAND_MIN_60_KM * days,
       currency: "IDR",
     };
   }
@@ -51,9 +51,9 @@ export function calculateCost({
     origin.island === destination.island
   ) {
     return {
-      travelCost: OUT_PROVINCE_COST_SAME_ISLAND_MIN_60_KM,
+      travelCost: OUT_PROVINCE_COST_SAME_ISLAND_MIN_60_KM * days,
       currency: "IDR",
     };
   }
-  return { travelCost: IN_PROVINCE_COST_MIN_60_KM, currency: "IDR" };
+  return { travelCost: IN_PROVINCE_COST_MIN_60_KM * days, currency: "IDR" };
 }

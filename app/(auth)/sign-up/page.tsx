@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -51,6 +52,12 @@ export default function SignUpPage() {
           )}
         </div>
         <div className="space-y-1">
+          <label
+            htmlFor="password"
+            className="block text-md font-medium text-text-brand-200"
+          >
+            Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -71,10 +78,18 @@ export default function SignUpPage() {
         </div>
         <button
           type="submit"
-          className="w-full py-2 bg-brand-500 text-white rounded hover:bg-brand-600 transition-colors"
+          className="w-full py-2 bg-brand-500 text-white rounded hover:bg-brand-600 transition-colors my-4"
         >
           Sign Up
         </button>
+        <div>
+          <span className="">
+            Sudah punya akun?{" "}
+            <Link href="/sign-in" className="text-brand-500 hover:underline">
+              Masuk di sini
+            </Link>
+          </span>
+        </div>
       </form>
     </div>
   );

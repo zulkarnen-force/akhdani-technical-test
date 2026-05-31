@@ -32,7 +32,7 @@ describe("calculateCost", () => {
       km: 100,
       isAbroad: false,
     });
-    expect(result).toEqual({ travelCost: 300_000, currency: "IDR" });
+    expect(result).toEqual({ travelCost: 900_000, currency: "IDR" });
   });
 
   it("should calculate different province and same island cost correctly", () => {
@@ -46,15 +46,26 @@ describe("calculateCost", () => {
     expect(result).toEqual({ travelCost: 250_000, currency: "IDR" });
   });
 
+  it("should calculate different province and same island cost correctly (2)", () => {
+    const result = calculateCost({
+      origin: { island: "Jawa", province: "Jawa barat" },
+      destination: { island: "Jawa", province: "Jawa Tengah" },
+      days: 2,
+      km: 100,
+      isAbroad: false,
+    });
+    expect(result).toEqual({ travelCost: 500_000, currency: "IDR" });
+  });
+
   it("should calculate same province and same island cost correctly", () => {
     const result = calculateCost({
       origin: { island: "Jawa", province: "Jawa Barat" },
       destination: { island: "Jawa", province: "Jawa Barat" },
-      days: 1,
+      days: 2,
       km: 100,
       isAbroad: false,
     });
-    expect(result).toEqual({ travelCost: 200_000, currency: "IDR" });
+    expect(result).toEqual({ travelCost: 400_000, currency: "IDR" });
   });
 
   it("should calculate aboard travel", () => {
